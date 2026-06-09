@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koble — Get paid for every recommendation</title>
+<style>
+  :root {
+    --ink: #0D0D0D;
+    --ink-muted: #6B6B6B;
+    --ink-faint: #C4C4C4;
+    --surface: #F7F6F2;
+    --white: #FFFFFF;
+    --accent: #1A1A1A;
+    --koble-green: #1B7A52;
+    --koble-green-light: #E6F4EE;
+    --koble-green-mid: #2EAD73;
+    --border: rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 5%;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+    color: var(--ink); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--koble-green); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--ink-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink); color: var(--white);
+    padding: 0.55rem 1.3rem; border-radius: 100px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--koble-green); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 8rem 5% 5rem;
+    background: var(--white);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -20%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(27,122,82,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--koble-green-light); color: var(--koble-green);
+    padding: 5px 14px; border-radius: 100px; font-size: 13px; font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow::before { content: '●'; font-size: 8px; }
+  h1 {
+    font-size: clamp(42px, 5vw, 64px);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -2px; color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  h1 em { color: var(--koble-green); font-style: normal; }
+  .hero-sub {
+    font-size: 18px; color: var(--ink-muted); line-height: 1.7;
+    max-width: 480px; margin-bottom: 2.5rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--koble-green); color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 15px; font-weight: 600; text-decoration: none;
+    transition: transform 0.15s, background 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #156040; transform: translateY(-1px); }
+  .btn-secondary {
+    color: var(--ink); font-size: 15px; font-weight: 500;
+    text-decoration: none; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-secondary::after { content: '→'; }
+  .btn-secondary:hover { color: var(--koble-green); }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    display: flex; justify-content: center; align-items: center;
+  }
+  .phone-frame {
+    width: 260px; height: 540px;
+    background: var(--ink);
+    border-radius: 36px;
+    padding: 14px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.18), 0 8px 20px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: #F0F0EC;
+    border-radius: 24px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .phone-statusbar { height: 40px; background: var(--ink); border-radius: 24px 24px 0 0; display: flex; align-items: center; justify-content: center; }
+  .phone-notch { width: 80px; height: 22px; background: var(--ink); border-radius: 0 0 16px 16px; }
+  .phone-content { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .phone-greeting { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .phone-balance {
+    background: var(--koble-green); color: var(--white);
+    border-radius: 16px; padding: 14px;
+  }
+  .phone-balance-label { font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+  .phone-balance-amount { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-top: 2px; }
+  .phone-balance-sub { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+  .phone-activity { background: var(--white); border-radius: 14px; padding: 12px; }
+  .phone-activity-title { font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .phone-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #F0F0F0; }
+  .phone-item:last-child { border-bottom: none; }
+  .phone-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--koble-green-light); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+  .phone-item-info { flex: 1; }
+  .phone-item-name { font-size: 11px; font-weight: 600; color: var(--ink); }
+  .phone-item-sub { font-size: 10px; color: var(--ink-muted); }
+  .phone-item-earn { font-size: 11px; font-weight: 700; color: var(--koble-green); }
+  .phone-codes { background: var(--white); border-radius: 14px; padding: 12px; }
+  .phone-codes-title { font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .codes-bar { display: flex; gap: 4px; margin-bottom: 4px; }
+  .code-dot { height: 8px; border-radius: 4px; background: var(--koble-green); }
+  .code-dot.used { background: #E5E5E0; }
+  .codes-sub { font-size: 9px; color: var(--ink-muted); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--surface);
+    padding: 2.5rem 5%;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 3rem; justify-content: space-around; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 38px; font-weight: 800; color: var(--ink); letter-spacing: -1.5px; line-height: 1; }
+  .stat-num span { color: var(--koble-green); }
+  .stat-label { font-size: 14px; color: var(--ink-muted); margin-top: 4px; }
+
+  /* SECTION COMMONS */
+  section { padding: 6rem 5%; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .eyebrow { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--koble-green); margin-bottom: 1rem; }
+  h2 { font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 1rem; }
+  .section-sub { font-size: 17px; color: var(--ink-muted); max-width: 520px; line-height: 1.7; }
+
+  /* HOW IT WORKS */
+  .how-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5px; margin-top: 4rem;
+    border: 1.5px solid var(--ink); border-radius: 20px; overflow: hidden;
+    background: var(--ink);
+  }
+  .how-card {
+    background: var(--white);
+    padding: 2.5rem 2rem;
+    transition: background 0.2s;
+  }
+  .how-card:hover { background: var(--koble-green-light); }
+  .how-num {
+    font-size: 13px; font-weight: 700; color: var(--koble-green);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.2rem;
+  }
+  .how-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 0.7rem; }
+  .how-body { font-size: 14px; color: var(--ink-muted); line-height: 1.7; }
+
+  /* FOR WHOM */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    margin-top: 4rem; align-items: start;
+  }
+  .audience-card {
+    border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .audience-card.featured { border-color: var(--koble-green); background: var(--koble-green-light); }
+  .audience-icon { font-size: 32px; margin-bottom: 1.2rem; }
+  .audience-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 0.7rem; }
+  .audience-body { font-size: 14px; color: var(--ink-muted); margin-bottom: 1.5rem; line-height: 1.7; }
+  .audience-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .audience-list li { font-size: 14px; display: flex; align-items: flex-start; gap: 8px; }
+  .audience-list li::before { content: '✓'; color: var(--koble-green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* FINANCE */
+  .finance-section { background: var(--surface); }
+  .plans-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px; margin-top: 3.5rem;
+  }
+  .plan-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem 1.5rem;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .plan-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .plan-card.featured-plan { background: var(--koble-green); color: var(--white); border-color: var(--koble-green); }
+  .plan-icon { font-size: 24px; margin-bottom: 1rem; }
+  .plan-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .plan-rate { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
+  .plan-period { font-size: 12px; opacity: 0.6; margin-bottom: 1rem; }
+  .plan-desc { font-size: 13px; opacity: 0.75; line-height: 1.5; }
+  .plan-card.featured-plan .plan-rate { color: var(--white); }
+
+  /* PRICING */
+  .pricing-table {
+    margin-top: 3.5rem;
+    border: 1.5px solid var(--border); border-radius: 20px; overflow: hidden;
+  }
+  .pricing-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    gap: 0; padding: 1.1rem 2rem; border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .pricing-row:last-child { border-bottom: none; }
+  .pricing-row.header { background: var(--ink); color: var(--white); font-size: 13px; font-weight: 600; }
+  .pricing-row:not(.header):nth-child(even) { background: var(--surface); }
+  .pricing-product { font-size: 15px; font-weight: 600; }
+  .pricing-desc { font-size: 13px; color: var(--ink-muted); font-weight: 400; }
+  .pricing-price { font-size: 15px; font-weight: 700; color: var(--koble-green); }
+
+  /* CTA */
+  .cta-section {
+    background: var(--ink); color: var(--white);
+    text-align: center; padding: 7rem 5%;
+  }
+  .cta-section h2 { color: var(--white); margin-bottom: 1rem; }
+  .cta-section .section-sub { color: rgba(255,255,255,0.6); margin: 0 auto 2.5rem; }
+  .btn-cta-white {
+    background: var(--white); color: var(--ink);
+    padding: 1rem 2.5rem; border-radius: 100px;
+    font-size: 16px; font-weight: 700; text-decoration: none;
+    display: inline-block; transition: background 0.2s, transform 0.15s;
+    margin: 0.4rem;
+  }
+  .btn-cta-white:hover { background: var(--koble-green); color: var(--white); transform: translateY(-1px); }
+  .btn-cta-outline {
+    background: transparent; color: var(--white);
+    padding: 1rem 2.5rem; border-radius: 100px;
+    font-size: 16px; font-weight: 600; text-decoration: none;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    display: inline-block; transition: border-color 0.2s;
+    margin: 0.4rem;
+  }
+  .btn-cta-outline:hover { border-color: var(--white); }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface);
+    padding: 3rem 5%;
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  .footer-logo span { color: var(--koble-green); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 13px; color: var(--ink-muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink); }
+  .footer-copy { font-size: 12px; color: var(--ink-faint); }
+
+  @media (max-width: 768px) {
+    .hero-inner, .two-col { grid-template-columns: 1fr; gap: 3rem; }
+    .hero-visual { display: none; }
+    .nav-links { display: none; }
+    .pricing-row { grid-template-columns: 1fr; gap: 4px; padding: 1rem; }
+    .footer-inner { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">k<span>o</span>ble</a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#who">For you</a></li>
+    <li><a href="#finance">Finance</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#join" class="nav-cta">Get started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Now open in Australia</div>
+      <h1>You refer.<br>You <em>earn.</em><br>Simple.</h1>
+      <p class="hero-sub">Koble turns everyday word-of-mouth into real income. Every recommendation you make earns you a commission — automatically, in the background.</p>
+      <div class="hero-actions">
+        <a href="#join" class="btn-primary">↓ Download the app</a>
+        <a href="#how" class="btn-secondary">See how it works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-statusbar"><div class="phone-notch"></div></div>
+          <div class="phone-content">
+            <div class="phone-greeting">Good morning, Alex 👋</div>
+            <div class="phone-balance">
+              <div class="phone-balance-label">Koble balance</div>
+              <div class="phone-balance-amount">$47.00</div>
+              <div class="phone-balance-sub">+$3 this week · Q3 payout in 22 days</div>
+            </div>
+            <div class="phone-activity">
+              <div class="phone-activity-title">Recent commissions</div>
+              <div class="phone-item">
+                <div class="phone-dot">☕</div>
+                <div class="phone-item-info">
+                  <div class="phone-item-name">Single O Coffee</div>
+                  <div class="phone-item-sub">Code used · today</div>
+                </div>
+                <div class="phone-item-earn">+$1</div>
+              </div>
+              <div class="phone-item">
+                <div class="phone-dot">💇</div>
+                <div class="phone-item-info">
+                  <div class="phone-item-name">Barber HQ Bondi</div>
+                  <div class="phone-item-sub">Code used · yesterday</div>
+                </div>
+                <div class="phone-item-earn">+$1</div>
+              </div>
+              <div class="phone-item">
+                <div class="phone-dot">🍕</div>
+                <div class="phone-item-info">
+                  <div class="phone-item-name">Darlo Bar & Kitchen</div>
+                  <div class="phone-item-sub">Code used · 3 days ago</div>
+                </div>
+                <div class="phone-item-earn">+$1</div>
+              </div>
+            </div>
+            <div class="phone-codes">
+              <div class="phone-codes-title">Your codes · 62 remaining</div>
+              <div class="codes-bar">
+                <div class="code-dot" style="flex:62"></div>
+                <div class="code-dot used" style="flex:38"></div>
+              </div>
+              <div class="codes-sub">38 codes used · 12 months to expiry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-num">$1<span>/code</span></div>
+      <div class="stat-label">Commission per referral</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100</div>
+      <div class="stat-label">Codes per connector</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2.8<span>% pa</span></div>
+      <div class="stat-label">Top investment return</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24<span>/7</span></div>
+      <div class="stat-label">Always earning</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="eyebrow">How it works</div>
+    <h2>Four steps to your first Koble dollar</h2>
+    <p class="section-sub">No sales experience needed. If you can text a friend a recommendation, you can use Koble.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">Step 01</div>
+        <div class="how-title">Sign up as a Connector</div>
+        <div class="how-body">Create your free Koble account. You get 100 unique codes — 80 digital, 20 physical — registered to you and only you.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">Step 02</div>
+        <div class="how-title">Pick a business you love</div>
+        <div class="how-body">Browse Koble-partnered businesses in your city. Choose the ones you genuinely use and recommend to friends already.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">Step 03</div>
+        <div class="how-title">Share your code</div>
+        <div class="how-body">Send a digital code or hand someone a physical card. When they use it in-store, they get a discount and you earn $1 — automatically.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-num">Step 04</div>
+        <div class="how-title">Withdraw or invest</div>
+        <div class="how-body">Earnings accumulate in your Koble account. Withdraw every quarter, or let them grow with our investment options — up to 2.8% p.a.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHOM -->
+<section id="who" style="background: var(--surface);">
+  <div class="section-inner">
+    <div class="eyebrow">Who Koble is for</div>
+    <h2>Two sides, one platform</h2>
+    <p class="section-sub">Whether you want to earn or advertise, Koble makes word-of-mouth work.</p>
+    <div class="two-col">
+      <div class="audience-card featured">
+        <div class="audience-icon">🤳</div>
+        <div class="audience-title">Connectors (you)</div>
+        <div class="audience-body">You already recommend great businesses to your friends. Now get paid for it. Koble turns your natural influence into a steady side income.</div>
+        <ul class="audience-list">
+          <li>100 unique codes — digital &amp; physical</li>
+          <li>$1 commission every time a code is used</li>
+          <li>Quarterly withdrawals or investment growth</li>
+          <li>Rewards and vouchers as an alternative</li>
+          <li>Refresh codes for $20 when you run out</li>
+        </ul>
+      </div>
+      <div class="audience-card">
+        <div class="audience-icon">🏪</div>
+        <div class="audience-title">Businesses</div>
+        <div class="audience-body">Stop relying solely on paid ads. Koble gives you a trusted army of real customers promoting you to their circles — and you only pay when it converts.</div>
+        <ul class="audience-list">
+          <li>Cost-effective word-of-mouth at scale</li>
+          <li>Real analytics on referral performance</li>
+          <li>Drives new foot traffic via incentive</li>
+          <li>Monthly advertising from $2,000</li>
+          <li>Particularly powerful for local businesses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCE OPTIONS -->
+<section id="finance" class="finance-section">
+  <div class="section-inner">
+    <div class="eyebrow">Finance options</div>
+    <h2>What to do with your Koble dollars</h2>
+    <p class="section-sub">Five ways to make your earnings work for you. Choose any time.</p>
+    <div class="plans-grid">
+      <div class="plan-card featured-plan">
+        <div class="plan-icon">📈</div>
+        <div class="plan-name">High yield</div>
+        <div class="plan-rate">2.8%</div>
+        <div class="plan-period">per annum · 5 year term</div>
+        <div class="plan-desc">Best long-term returns for patient investors.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-icon">⚖️</div>
+        <div class="plan-name">Medium yield</div>
+        <div class="plan-rate">1.4%</div>
+        <div class="plan-period">per annum · 5 year term</div>
+        <div class="plan-desc">Balanced growth with moderate commitment.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-icon">🛡️</div>
+        <div class="plan-name">Low yield</div>
+        <div class="plan-rate">0.7%</div>
+        <div class="plan-period">per annum · 5 year term</div>
+        <div class="plan-desc">Conservative option for cautious savers.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-icon">🎁</div>
+        <div class="plan-name">Rewards</div>
+        <div class="plan-rate">Products</div>
+        <div class="plan-period">vouchers &amp; perks</div>
+        <div class="plan-desc">Spend your balance on partner products and experiences.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-icon">💵</div>
+        <div class="plan-name">Cash out</div>
+        <div class="plan-rate">1 : 1</div>
+        <div class="plan-period">Koble $ to AUD</div>
+        <div class="plan-desc">Straight cash with zero fees. What you earn is what you get.</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--ink-muted); margin-top:1.2rem;">All accounts include a bi-monthly early withdrawal option with a 13.33% fee. Quarter-end withdrawals are fee-free.</p>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="eyebrow">Pricing</div>
+    <h2>Transparent. No surprises.</h2>
+    <p class="section-sub">Every fee is visible before you commit. Koble never handles cash directly — all transactions are automated.</p>
+    <div class="pricing-table">
+      <div class="pricing-row header">
+        <div>Product</div>
+        <div>Who pays</div>
+        <div>Price</div>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <div class="pricing-product">Code refresh</div>
+          <div class="pricing-desc">100 new codes when your original set runs out</div>
+        </div>
+        <div style="font-size:14px; color:var(--ink-muted);">Connectors</div>
+        <div class="pricing-price">$20 / pack</div>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <div class="pricing-product">Business listing</div>
+          <div class="pricing-desc">Full platform advertising &amp; analytics dashboard</div>
+        </div>
+        <div style="font-size:14px; color:var(--ink-muted);">Businesses</div>
+        <div class="pricing-price">$2,000 / mo</div>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <div class="pricing-product">Connector account</div>
+          <div class="pricing-desc">Sign up, get your first 100 codes, start earning</div>
+        </div>
+        <div style="font-size:14px; color:var(--ink-muted);">Connectors</div>
+        <div class="pricing-price">Free</div>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <div class="pricing-product">Early withdrawal fee</div>
+          <div class="pricing-desc">Withdrawing before your quarterly window</div>
+        </div>
+        <div style="font-size:14px; color:var(--ink-muted);">Connectors</div>
+        <div class="pricing-price">13.33%</div>
+      </div>
+      <div class="pricing-row">
+        <div>
+          <div class="pricing-product">Quarterly withdrawal</div>
+          <div class="pricing-desc">Standard quarterly payout</div>
+        </div>
+        <div style="font-size:14px; color:var(--ink-muted);">Connectors</div>
+        <div class="pricing-price">Free</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="join">
+  <div class="section-inner">
+    <div class="eyebrow" style="color: var(--koble-green-mid);">Ready to start?</div>
+    <h2>Do you want to earn<br>some extra Koble?</h2>
+    <p class="section-sub">Sign up free, get 100 codes, and earn your first dollar by the end of the week.</p>
+    <div>
+      <a href="#" class="btn-cta-white">Download the app</a>
+      <a href="#" class="btn-cta-outline">List your business</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">k<span>o</span>ble</div>
+    <div class="footer-links">
+      <a href="#">About</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-copy">ABN 17963118716 · NSW Australia · info@koble.net.au</div>
+  </div>
+</footer>
+
+</body>
+</html>
